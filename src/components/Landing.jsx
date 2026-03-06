@@ -7,8 +7,8 @@ const Landing = () => (
       Base de Conhecimentos
     </Typography>
     <Typography variant="body1" color="text.secondary">
-      Aqui você poderá gerenciar e compartilhar conhecimentos com outras pessoas
-      da Avanti e outras comunidades.
+      Aqui você poderá gerenciar e compartilhar ofertas de conhecimentos com
+      pessoas da Avanti e outras comunidades.
     </Typography>
   </Paper>
 );

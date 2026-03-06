@@ -7,7 +7,11 @@ import {
   Button,
   Stack,
   Box,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const PeopleForm = ({
   people,
@@ -16,6 +20,7 @@ const PeopleForm = ({
   onSubmit,
   editingPersonId,
   onCancelEdit,
+  onDelete,
   loading,
 }) => {
   const handleChange = (field) => (e) => {
@@ -59,15 +64,15 @@ const PeopleForm = ({
           />
         </Grid>
 
-        <Grid item xs={12} md={3}>
-          <TextField
-            fullWidth
-            size="small"
-            label="Descrição"
-            value={form.description}
-            onChange={handleChange("description")}
-          />
-        </Grid>
+        <TextField
+          fullWidth
+          size="small"
+          label="Descrição"
+          value={form.description}
+          onChange={handleChange("description")}
+          multiline
+          minRows={3}
+        />
       </Grid>
 
       <Stack direction="row" spacing={2} mb={3}>
@@ -108,13 +113,21 @@ const PeopleForm = ({
             </Box>
 
             <Stack direction="row" spacing={1}>
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={() => onCancelEdit(person)}
-              >
-                Editar
-              </Button>
+              <Tooltip title="Editar">
+                <IconButton size="small" onClick={() => onCancelEdit(person)}>
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Excluir">
+                <IconButton
+                  size="small"
+                  color="error"
+                  onClick={() => onDelete && onDelete(person.id)}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
             </Stack>
           </Box>
         ))}

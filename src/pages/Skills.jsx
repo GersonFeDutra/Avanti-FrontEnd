@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Container, Alert } from "@mui/material";
+import {
+  Container,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+} from "@mui/material";
 import axios from "axios";
 import SkillsForm from "../components/SkillsForm";
 import SkillsList from "../components/SkillsList";
@@ -13,19 +22,18 @@ const api = axios.create({
 });
 
 const Skills = () => {
-  const [people, setPeople] = useState([]);
   const [skills, setSkills] = useState([]);
+  const [people, setPeople] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingDeleteId, setLoadingDeleteId] = useState(null);
   const [message, setMessage] = useState({ type: "", text: "" });
   const [editingSkillId, setEditingSkillId] = useState(null);
+  const [confirmDeleteSkill, setConfirmDeleteSkill] = useState(null);
 
   const [skillForm, setSkillForm] = useState({
     title: "",
     description: "",
     category: "",
-    level: "",
-    personId: "",
   });
 
   const showMessage = (type, text) => {
@@ -37,19 +45,8 @@ const Skills = () => {
   };
 
   const resetSkillForm = () => {
-    setSkillForm({
-      title: "",
-      description: "",
-      category: "",
-      level: "",
-      personId: "",
-    });
+    setSkillForm({ title: "", description: "", category: "" });
     setEditingSkillId(null);
-  };
-
-  const loadPeople = async () => {
-    const { data } = await api.get("/persons");
-    setPeople(data);
   };
 
   const loadSkills = async () => {
@@ -60,7 +57,7 @@ const Skills = () => {
   const loadAll = async () => {
     try {
       setLoading(true);
-      await Promise.all([loadPeople(), loadSkills()]);
+      await Promise.all([loadSkills()]);
     } catch (error) {
       showMessage("error", getErrorMessage(error, "Erro ao buscar dados"));
     } finally {
@@ -81,8 +78,6 @@ const Skills = () => {
         title: skillForm.title,
         description: skillForm.description,
         category: skillForm.category,
-        level: skillForm.level,
-        personId: Number(skillForm.personId),
       };
 
       if (editingSkillId) {
@@ -110,9 +105,10 @@ const Skills = () => {
       title: skill.title || "",
       description: skill.description || "",
       category: skill.category || "",
-      level: skill.level || "",
-      personId: skill.personId || "",
     });
+    if (typeof window !== "undefined" && window.scrollTo) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const handleDeleteSkill = async (id) => {
@@ -153,9 +149,41 @@ const Skills = () => {
         skills={skills}
         people={people}
         onEdit={handleEditSkill}
-        onDelete={handleDeleteSkill}
+        onDelete={(id) =>
+          setConfirmDeleteSkill({
+            id,
+            title: skills.find((s) => s.id === id)?.title || "",
+          })
+        }
         loadingDeleteId={loadingDeleteId}
       />
+
+      <Dialog
+        open={!!confirmDeleteSkill}
+        onClose={() => setConfirmDeleteSkill(null)}
+      >
+        <DialogTitle>Confirmar exclusão</DialogTitle>
+        <DialogContent dividers>
+          <Typography>
+            Tem certeza que deseja excluir{" "}
+            <strong>{confirmDeleteSkill?.title}</strong>?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDeleteSkill(null)}>Cancelar</Button>
+          <Button
+            color="error"
+            onClick={async () => {
+              if (confirmDeleteSkill) {
+                await handleDeleteSkill(confirmDeleteSkill.id);
+                setConfirmDeleteSkill(null);
+              }
+            }}
+          >
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

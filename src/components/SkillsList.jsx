@@ -5,16 +5,14 @@ import {
   Grid,
   Card,
   CardContent,
-  Button,
+  IconButton,
   Stack,
+  Tooltip,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-const SkillsList = ({ skills, people, onEdit, onDelete, loadingDeleteId }) => {
-  const getPersonName = (personId) => {
-    const person = people.find((item) => Number(item.id) === Number(personId));
-    return person ? person.name : `Pessoa ${personId}`;
-  };
-
+const SkillsList = ({ skills, onEdit, onDelete, loadingDeleteId }) => {
   return (
     <Paper sx={{ p: 3 }}>
       <Typography variant="h6" gutterBottom>
@@ -23,20 +21,21 @@ const SkillsList = ({ skills, people, onEdit, onDelete, loadingDeleteId }) => {
 
       <Grid
         container
-        justifyContent="flex-start"
         spacing={3}
-        alignContent="space-between"
+        display="grid"
+        gridTemplateColumns="repeat(auto-fill, minmax(300px, 1fr))"
       >
         {skills.map((skill) => (
-          <Grid
-            item
-            xs={12}
-            md={6}
-            key={skill.id}
-            sx={{ flexGrow: 1, flexBasis: 0, maxWidth: 400, minWidth: 250 }}
-          >
-            <Card>
-              <CardContent>
+          <Grid item xs={12} md={6} key={skill.id}>
+            <Card
+              sx={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+              }}
+            >
+              <CardContent sx={{ flexGrow: 1 }}>
                 <Typography variant="h6">{skill.title}</Typography>
 
                 <Typography variant="body2" color="text.secondary" mb={1}>
@@ -46,22 +45,35 @@ const SkillsList = ({ skills, people, onEdit, onDelete, loadingDeleteId }) => {
                 <Typography variant="body2">
                   <strong>Categoria:</strong> {skill.category || "-"}
                 </Typography>
+              </CardContent>
 
-                <Stack direction="row" spacing={1}>
-                  <Button variant="outlined" onClick={() => onEdit(skill)}>
-                    Editar
-                  </Button>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{ p: 2, pt: 0, justifyContent: "flex-end" }}
+              >
+                <Tooltip title="Editar">
+                  <IconButton
+                    size="small"
+                    onClick={() => onEdit(skill)}
+                    aria-label="editar"
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
 
-                  <Button
-                    variant="outlined"
-                    color="error"
+                <Tooltip title="Excluir">
+                  <IconButton
+                    size="small"
                     onClick={() => onDelete(skill.id)}
+                    aria-label="excluir"
+                    color="error"
                     disabled={loadingDeleteId === skill.id}
                   >
-                    Excluir
-                  </Button>
-                </Stack>
-              </CardContent>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Stack>
             </Card>
           </Grid>
         ))}

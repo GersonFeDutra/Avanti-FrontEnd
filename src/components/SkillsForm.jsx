@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 
 const SkillsForm = ({
-  people,
   form,
   setForm,
   onSubmit,
@@ -30,23 +29,6 @@ const SkillsForm = ({
       </Typography>
 
       <Grid container spacing={2}>
-        <Grid item xs={12} md={3}>
-          <Select
-            fullWidth
-            size="small"
-            displayEmpty
-            value={form.personId}
-            onChange={handleChange("personId")}
-          >
-            <MenuItem value="">Selecione uma pessoa</MenuItem>
-            {people.map((person) => (
-              <MenuItem key={person.id} value={person.id}>
-                {person.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </Grid>
-
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
@@ -67,23 +49,17 @@ const SkillsForm = ({
           />
         </Grid>
 
-        <Grid item xs={12} md={2}>
-          <TextField
-            fullWidth
-            size="small"
-            label="Nível"
-            value={form.level}
-            onChange={handleChange("level")}
-          />
-        </Grid>
+        <Grid item xs={12} md={2} />
 
-        <Grid item xs={12} md={2}>
+        <Grid item fullWidth size="grow" minWidth={200}>
           <TextField
             fullWidth
             size="small"
             label="Descrição"
             value={form.description}
             onChange={handleChange("description")}
+            multiline
+            minRows={3}
           />
         </Grid>
       </Grid>
